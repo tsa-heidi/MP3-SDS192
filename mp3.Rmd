@@ -1,0 +1,29 @@
+---
+title: "mp3"
+author: "Viola Nguyen"
+date: "12 kwietnia 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(macleish)
+library(sf)
+library(raster)
+library(dplyr)
+library(leaflet)
+library(ggplot2)
+```
+
+
+```{r}
+data("macleish_layers")
+```
+
+```{r}
+
+```
+
