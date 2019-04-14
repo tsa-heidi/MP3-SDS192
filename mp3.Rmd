@@ -1,26 +1,54 @@
 ---
-title: "mp3"
-author: "Viola Nguyen"
+title: "Hiking trails"
+author: "Viola Nguyen, Hedidi Tsang"
 date: "12 kwietnia 2019"
-output: html_document
+output: output: 
+  html_document:
+    cold_folding: hide
 ---
+
+Determining the trail difficulty levels at the Macleish Field Station (based on their length and change in elevation)
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, message= FALSE, warning=FALSE}
+# Loading libraries ----
 library(macleish)
 library(sf)
 library(raster)
 library(dplyr)
 library(leaflet)
 library(ggplot2)
+library(rgdal)
+library(rgeos)
 ```
 
 
 ```{r}
+# Loading macleish layers ----
 data("macleish_layers")
+class(macleish_layers)
+```
+
+```{r}
+contours<-macleish_layers[["contours_30ft"]]
+```
+
+```{r}
+# Importing GIS data for Whately  ----
+gis_whately <- "http://download.massgis.digital.mass.gov/shapefiles/contours5k/hp337.zip"
+download.file(gis_whately, destfile = basename(gis_whately))
+unzip("hp337.zip", exdir = "whately_contours")
+```
+
+```{r}
+# Transforming whately countours into matching projection
+whately_GIS <- path.expand("whately_contours")
+whately_cont <- readOGR(whately_GIS, "hp337") %>%
+  spTransform(CRS("+init=epsg:4326"))
 ```
 
 ```{r}
