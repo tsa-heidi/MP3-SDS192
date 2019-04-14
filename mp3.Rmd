@@ -45,13 +45,55 @@ unzip("hp337.zip", exdir = "whately_contours")
 ```
 
 ```{r}
-# Transforming whately countours into matching projection
+# Transforming Whately countours into matching projection
 whately_GIS <- path.expand("whately_contours")
 whately_cont <- readOGR(whately_GIS, "hp337") %>%
   spTransform(CRS("+init=epsg:4326"))
 ```
 
 ```{r}
-
+# Importing GIS data for Conway ----
+gis_conway <- "http://download.massgis.digital.mass.gov/shapefiles/contours5k/hp68.zip"
+download.file(gis_conway, destfile = basename(gis_conway))
+unzip("hp68.zip", exdir = "conway_contours")
 ```
+
+```{r}
+# Transforming Conway countours into matching projection ----
+conway_GIS <- path.expand("conway_contours")
+conway_cont <- readOGR(conway_GIS, "hp68") %>%
+  spTransform(CRS("+init=epsg:4326"))
+```
+
+```{r}
+# Merging contours for Conway and Whately into one polygon ----
+macleish_boundaries <-
+  gUnion(conway_cont, whately_cont)
+```
+
+```{r}
+# Polygon intersection with Macleish layer ----
+macleish_boundaries %>%
+  gIntersection(macleish_layers[['boundary']])
+```
+
+```{r}
+# Removing Whately and Conway contours ----
+trail_points <- macleish_boundaries %>%
+  gIntersection(macleish_layers[['trails']])
+```
+
+
+```{r, message=FALSE}
+# Creating the interactive map (with contours and trails) ----
+map1 <- leaflet() %>%
+  addTiles() %>%
+  addPolylines(data = macleish_boundaries, weight = 1, color = "black") %>%
+  addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "green") %>%
+  addPolylines(data = macleish_layers[["trails"]], weight = 3) %>%
+  addCircleMarkers(data = trail_points, radius = 2, color = "purple") %>% addMeasure(activeColor="yellow")
+map1
+```
+
+
 
