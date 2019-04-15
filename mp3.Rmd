@@ -2,17 +2,22 @@
 title: "Hiking trails"
 author: "Viola Nguyen, Hedidi Tsang"
 date: "12 kwietnia 2019"
-output: output: 
+output: 
   html_document:
     cold_folding: hide
 ---
-
-Determining the trail difficulty levels at the Macleish Field Station (based on their length and change in elevation)
 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+Determining the trail difficulty levels at the Macleish Field Station (based on their length and change in elevation)
+
+
+
+
+
 
 ```{r, message= FALSE, warning=FALSE}
 # Loading libraries ----
@@ -24,6 +29,7 @@ library(leaflet)
 library(ggplot2)
 library(rgdal)
 library(rgeos)
+library(TTR)
 ```
 
 
@@ -31,35 +37,6 @@ library(rgeos)
 # Loading macleish layers ----
 data("macleish_layers")
 class(macleish_layers)
-```
-
----
-title: "Untitled"
-author: "Viola Nguyen"
-date: "14 kwietnia 2019"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r}
-library(TTR)
-```
-
-
-```{r, message= FALSE, warning=FALSE}
-# Loading libraries ----
-library(macleish)
-library(sf)
-library(raster)
-library(dplyr)
-library(leaflet)
-library(ggplot2)
-library(rgdal)
-library(rgeos)
-library(TTR)
 ```
 
 
@@ -99,7 +76,6 @@ east_loop<-trail_points%>%
 
 ```{r}
 # Creating interactive map ----
-track <- readOGR(macleish_layers, layer = "trails", verbose = TRUE)
 leaflet() %>% 
   addTiles() %>%
   addPolylines(data=west_loop, color='blue', group='Hiking routes')%>%
