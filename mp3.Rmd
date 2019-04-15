@@ -16,9 +16,6 @@ Determining the trail difficulty levels at the Macleish Field Station (based on 
 
 
 
-
-
-
 ```{r, message= FALSE, warning=FALSE}
 # Loading libraries ----
 library(macleish)
@@ -99,9 +96,32 @@ leaflet() %>%
 ```
 
 
+```{r}
+# Joining East Loop Trail with elevation data ----
+east_loop_joined<-st_join(east_loop, elevation)
+```
 
 
 
+```{r}
+x <- st_intersection(
+  (macleish_layers[['trails']]), 
+  (macleish_layers[["contours_30ft"]])
+)
+```
+
+```{r}
+western <- filter(x, name == "Western Loop")
+western_pts <- western %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+nrow(western_pts)
+```
+
+```{r}
+sapply(western_pts, class)
+```
 
 
 
