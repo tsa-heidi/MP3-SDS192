@@ -27,29 +27,34 @@ library(ggplot2)
 library(rgdal)
 library(rgeos)
 library(TTR)
+library(tidyr)
+library(purrr)
 ```
 
 
-```{r}
+```{r, message= FALSE, warning=FALSE}
 # Loading macleish layers ----
 data("macleish_layers")
 class(macleish_layers)
 ```
 
 
-```{r}
+```{r, message= FALSE, warning=FALSE}
 # Trails subdataset ----
 trail_points <- (macleish_layers[['trails']])
 ```
 
 
-```{r}
+```{r, message= FALSE, warning=FALSE}
 # Elevation subdataset ----
 elevation <- (macleish_layers[["contours_3m"]])
 ```
 
 
-```{r}
+
+
+
+```{r, message= FALSE, warning=FALSE}
 # Western Loop subdata set ----
 west_loop<-trail_points%>%
   dplyr::select(name,geometry)%>%
@@ -57,21 +62,21 @@ west_loop<-trail_points%>%
 ```
 
 
-```{r}
+```{r, message= FALSE, warning=FALSE}
 # Poplar Road subdata set ----
 poplar_road<-trail_points%>%
   dplyr::select(name,geometry)%>%
   filter(name=="Poplar Hill Road")
 ```
 
-```{r}
+```{{r, message= FALSE, warning=FALSE}
 # East Loop subdata set ----
 east_loop<-trail_points%>%
   dplyr::select(name,geometry)%>%
   filter(name=="Eastern Loop")
 ```
 
-```{r}
+```{r, message= FALSE, warning=FALSE}
 # Creating interactive map ----
 leaflet() %>% 
   addTiles() %>%
@@ -95,32 +100,120 @@ leaflet() %>%
     options = layersControlOptions(collapsed = FALSE))
 ```
 
-
-```{r}
-# Joining East Loop Trail with elevation data ----
-east_loop_joined<-st_join(east_loop, elevation)
+```{r, message= FALSE, warning=FALSE}
+# Trabsfrming Projections ----
+st_transform(trail_points, 4326)
+st_transform(elevation, 4326)
 ```
 
 
-
-```{r}
+```{r, message= FALSE, warning=FALSE}
+# Joining Trails with elevation data ----
 x <- st_intersection(
   (macleish_layers[['trails']]), 
   (macleish_layers[["contours_3m"]])
 )
 ```
 
-```{r}
+```{r, message= FALSE, warning=FALSE}
+# Casting Western Loop ----
 western <- filter(x, name == "Western Loop")
 western_pts <- western %>% 
   st_cast("MULTIPOINT") %>% 
   st_cast("POINT")
 
-nrow(western_pts)
 ```
 
-```{r}
-sapply(western_pts, class)
+```{r, message= FALSE, warning=FALSE}
+# Casting Poplar Rd ----
+poplar <- filter(x, name == "Poplar Hill Road")
+poplar_pts <- poplar %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+```
+
+```{r, message= FALSE, warning=FALSE}
+# Casting Eastern Loop ----
+eastern <- filter(x, name == "Eastern Loop")
+eastern_pts <- eastern %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+```
+
+
+
+```{r, message= FALSE, warning=FALSE}
+# Total Elevation Gain for Western Loop
+western_pts2<-western_pts %>%
+  summarize(num_segments = n(), 
+            total_length = sum(SHAPE_LEN)) %>%
+  arrange(desc(total_length))
+
+```
+
+
+```{r, message= FALSE, warning=FALSE}
+# Total Elevation Gain for Eastern Loop ----
+eastern_pts2<-eastern_pts %>%
+  summarize(num_segments = n(), 
+            total_length = sum(SHAPE_LEN)) %>%
+  arrange(desc(total_length))
+```
+
+
+```{r, message= FALSE, warning=FALSE}
+# Total Elevation Gain for Poplar Road ----
+poplar_pts2<-poplar_pts %>%
+  summarize(num_segments = n(), 
+            total_length = sum(SHAPE_LEN)) %>%
+  arrange(desc(total_length))
+```
+
+
+```{r, message= FALSE, warning=FALSE}
+# Calculating Hiking Difficulty ----
+# Square root of(Elevation Gain x 2 x distance)
+# Distance obtained from interactive map
+
+# Western Loop
+west_level<-sqrt(45746.1*2*1.6)
+
+#Eastern Loop
+east_level<-sqrt(56482.79*2*1.16)
+
+#Poplar Hill Road
+poplar_level<-sqrt(17165.42*2*0.65)
+
+
+```
+
+
+
+```{r, message= FALSE, warning=FALSE}
+everything <- x %>%
+  dplyr::select("name", "ELEV_M", "SHAPE_LEN") %>%
+  st_set_geometry(NULL)
+```
+
+
+```{r, message= FALSE, warning=FALSE}
+difficulty_grade <- function(trail_name) {
+  
+  everything %>%
+    filter(name == trail_name) %>%
+    ggplot(aes(x = SHAPE_LEN, y = ELEV_M)) + 
+    geom_point()+
+    geom_line()+
+    expand_limits(x = c(0,100), y = c(220, 300)) +
+    labs(title = trail_name)
+}
+```
+
+```{r, message= FALSE, warning=FALSE}
+difficulty_grade("Western Loop")
+difficulty_grade("Eastern Loop")
 ```
 
 
