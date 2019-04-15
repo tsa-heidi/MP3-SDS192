@@ -33,67 +33,100 @@ data("macleish_layers")
 class(macleish_layers)
 ```
 
-```{r}
-contours<-macleish_layers[["contours_30ft"]]
+---
+title: "Untitled"
+author: "Viola Nguyen"
+date: "14 kwietnia 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-# Importing GIS data for Whately  ----
-gis_whately <- "http://download.massgis.digital.mass.gov/shapefiles/contours5k/hp337.zip"
-download.file(gis_whately, destfile = basename(gis_whately))
-unzip("hp337.zip", exdir = "whately_contours")
+library(TTR)
+```
+
+
+```{r, message= FALSE, warning=FALSE}
+# Loading libraries ----
+library(macleish)
+library(sf)
+library(raster)
+library(dplyr)
+library(leaflet)
+library(ggplot2)
+library(rgdal)
+library(rgeos)
+library(TTR)
+```
+
+
+```{r}
+# Trails subdataset ----
+trail_points <- (macleish_layers[['trails']])
+```
+
+
+```{r}
+# Elevation subdataset ----
+elevation <- (macleish_layers[["contours_3m"]])
+```
+
+
+```{r}
+# Western Loop subdata set ----
+west_loop<-trail_points%>%
+  dplyr::select(name,geometry)%>%
+  filter(name=="Western Loop")
+```
+
+
+```{r}
+# Poplar Road subdata set ----
+poplar_road<-trail_points%>%
+  dplyr::select(name,geometry)%>%
+  filter(name=="Poplar Hill Road")
 ```
 
 ```{r}
-# Transforming Whately countours into matching projection
-whately_GIS <- path.expand("whately_contours")
-whately_cont <- readOGR(whately_GIS, "hp337") %>%
-  spTransform(CRS("+init=epsg:4326"))
+# East Loop subdata set ----
+east_loop<-trail_points%>%
+  dplyr::select(name,geometry)%>%
+  filter(name=="Eastern Loop")
 ```
 
 ```{r}
-# Importing GIS data for Conway ----
-gis_conway <- "http://download.massgis.digital.mass.gov/shapefiles/contours5k/hp68.zip"
-download.file(gis_conway, destfile = basename(gis_conway))
-unzip("hp68.zip", exdir = "conway_contours")
-```
-
-```{r}
-# Transforming Conway countours into matching projection ----
-conway_GIS <- path.expand("conway_contours")
-conway_cont <- readOGR(conway_GIS, "hp68") %>%
-  spTransform(CRS("+init=epsg:4326"))
-```
-
-```{r}
-# Merging contours for Conway and Whately into one polygon ----
-macleish_boundaries <-
-  gUnion(conway_cont, whately_cont)
-```
-
-```{r}
-# Polygon intersection with Macleish layer ----
-macleish_boundaries %>%
-  gIntersection(macleish_layers[['boundary']])
-```
-
-```{r}
-# Removing Whately and Conway contours ----
-trail_points <- macleish_boundaries %>%
-  gIntersection(macleish_layers[['trails']])
-```
-
-
-```{r, message=FALSE}
-# Creating the interactive map (with contours and trails) ----
-map1 <- leaflet() %>%
+# Creating interactive map ----
+track <- readOGR(macleish_layers, layer = "trails", verbose = TRUE)
+leaflet() %>% 
   addTiles() %>%
-  addPolylines(data = macleish_boundaries, weight = 1, color = "black") %>%
-  addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "green") %>%
-  addPolylines(data = macleish_layers[["trails"]], weight = 3) %>%
-  addCircleMarkers(data = trail_points, radius = 2, color = "purple") %>% addMeasure(activeColor="yellow")
-map1
+  addPolylines(data=west_loop, color='blue', group='Hiking routes')%>%
+   addPolylines(data=east_loop, color='red', group='Hiking routes')%>%
+  addPolylines(data=poplar_road, color='purple', group='Hiking routes')%>%
+ addMeasure(activeColor="yellow")%>%
+  addProviderTiles("Thunderforest.Landscape", group = "Topographical") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Satellite")%>%
+  
+#Adding legend  
+    addLegend (position = 'bottomright',opacity = 0.4, 
+            colors = c('blue','red','purple'),
+            labels = c('Western Loop', 'East Loop','Poplar Road'),
+            title = 'Hike trails, Macleish Field')%>%
+
+# Layers control
+  addLayersControl(position = 'bottomleft',
+    baseGroups = c("Topographical", "Road map", "Satellite"),
+    overlayGroups = c("Hiking routes"),
+    options = layersControlOptions(collapsed = FALSE))
 ```
+
+
+
+
+
+
 
 
 
