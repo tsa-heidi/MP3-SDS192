@@ -1,5 +1,5 @@
 ---
-title: "Hiking trails"
+title: "It's a thrill to hike up the hill"
 author: "Viola Nguyen, Hedidi Tsang"
 date: "12 kwietnia 2019"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Determining the trail difficulty levels at the Macleish Field Station (based on their length and change in elevation)
+In this project we are trying to determining the trail difficulty levels at the Macleish Field Station based on their length and change in elevation.
 
 
 
@@ -69,12 +69,57 @@ poplar_road<-trail_points%>%
   filter(name=="Poplar Hill Road")
 ```
 
-```{{r, message= FALSE, warning=FALSE}
+```{r, message= FALSE, warning=FALSE}
 # East Loop subdata set ----
 east_loop<-trail_points%>%
   dplyr::select(name,geometry)%>%
   filter(name=="Eastern Loop")
 ```
+
+
+
+
+```{r, message= FALSE, warning=FALSE}
+# Joining Trails with elevation data ----
+library(tidyverse)
+library(sf)
+library(macleish)
+
+x <- st_intersection(
+  pluck(macleish_layers, "trails"), 
+  pluck(macleish_layers, "contours_30ft")
+)
+```
+
+```{r, message= FALSE, warning=FALSE}
+# Casting Western Loop ----
+western <- filter(x, name == "Western Loop")
+western_pts <- western %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+```
+
+```{r, message= FALSE, warning=FALSE}
+# Casting Poplar Rd ----
+poplar <- filter(x, name == "Poplar Hill Road")
+poplar_pts <- poplar %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+```
+
+```{r, message= FALSE, warning=FALSE}
+# Casting Eastern Loop ----
+eastern <- filter(x, name == "Eastern Loop")
+eastern_pts <- eastern %>% 
+  st_cast("MULTIPOINT") %>% 
+  st_cast("POINT")
+
+```
+
+
+
 
 ```{r, message= FALSE, warning=FALSE}
 # Creating interactive map ----
@@ -106,41 +151,6 @@ st_transform(trail_points, 4326)
 st_transform(elevation, 4326)
 ```
 
-
-```{r, message= FALSE, warning=FALSE}
-# Joining Trails with elevation data ----
-x <- st_intersection(
-  (macleish_layers[['trails']]), 
-  (macleish_layers[["contours_3m"]])
-)
-```
-
-```{r, message= FALSE, warning=FALSE}
-# Casting Western Loop ----
-western <- filter(x, name == "Western Loop")
-western_pts <- western %>% 
-  st_cast("MULTIPOINT") %>% 
-  st_cast("POINT")
-
-```
-
-```{r, message= FALSE, warning=FALSE}
-# Casting Poplar Rd ----
-poplar <- filter(x, name == "Poplar Hill Road")
-poplar_pts <- poplar %>% 
-  st_cast("MULTIPOINT") %>% 
-  st_cast("POINT")
-
-```
-
-```{r, message= FALSE, warning=FALSE}
-# Casting Eastern Loop ----
-eastern <- filter(x, name == "Eastern Loop")
-eastern_pts <- eastern %>% 
-  st_cast("MULTIPOINT") %>% 
-  st_cast("POINT")
-
-```
 
 
 
