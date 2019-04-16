@@ -1,6 +1,6 @@
 ---
 title: "It's a thrill to hike up the hill"
-author: "Viola Nguyen, Hedidi Tsang"
+author: "Viola Nguyen, Heidi Tsang"
 date: "12 kwietnia 2019"
 output: 
   html_document:
@@ -12,8 +12,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this project we are trying to determining the trail difficulty levels at the Macleish Field Station based on their length and change in elevation.
+MacLeish Field Station is located in West Whately, Massachusetts, about 11 miles from the Smith campus. It’s 260 acres area allows students to conduct  environmental research ( f.ex. working on Hemlock trees), do outdoor activities and archery. The process of developing Macleish Field Station started in 2008, that is when design studio students worked with Bertone-Johnson to design an interpretive trail network. Although the trails were clered, none of them were classified in terms of difficulty.
 
+In this project [^1] our group is trying to determining the trail difficulty levels at the Macleish Field Station based on their length and change in elevation.
+
+
+[^1]: Mini project 3 was uploaded and edited via Github repository [link](https://github.com/tsa-heidi/MP3-SDS192.git)
 
 
 ```{r, message= FALSE, warning=FALSE}
@@ -29,6 +33,7 @@ library(rgeos)
 library(TTR)
 library(tidyr)
 library(purrr)
+library(tidyverse)
 ```
 
 
@@ -49,10 +54,6 @@ trail_points <- (macleish_layers[['trails']])
 # Elevation subdataset ----
 elevation <- (macleish_layers[["contours_3m"]])
 ```
-
-
-
-
 
 ```{r, message= FALSE, warning=FALSE}
 # Western Loop subdata set ----
@@ -76,18 +77,12 @@ east_loop<-trail_points%>%
   filter(name=="Eastern Loop")
 ```
 
-
-
-
 ```{r, message= FALSE, warning=FALSE}
 # Joining Trails with elevation data ----
-library(tidyverse)
-library(sf)
-library(macleish)
 
 x <- st_intersection(
   pluck(macleish_layers, "trails"), 
-  pluck(macleish_layers, "contours_30ft")
+  pluck(macleish_layers, "contours_3m")
 )
 ```
 
@@ -119,8 +114,6 @@ eastern_pts <- eastern %>%
 ```
 
 
-
-
 ```{r, message= FALSE, warning=FALSE}
 # Creating interactive map ----
 leaflet() %>% 
@@ -150,8 +143,6 @@ leaflet() %>%
 st_transform(trail_points, 4326)
 st_transform(elevation, 4326)
 ```
-
-
 
 
 ```{r, message= FALSE, warning=FALSE}
@@ -188,7 +179,7 @@ poplar_pts2<-poplar_pts %>%
 # Distance obtained from interactive map
 
 # Western Loop
-west_level<-sqrt(45746.1*2*1.6)
+west_level<-sqrt(45746.1*2*1.3)
 
 #Eastern Loop
 east_level<-sqrt(56482.79*2*1.16)
@@ -196,12 +187,17 @@ east_level<-sqrt(56482.79*2*1.16)
 #Poplar Hill Road
 poplar_level<-sqrt(17165.42*2*0.65)
 
+# Hiking difficulty for each trail (in order)
+east_level #Eastern Loop
+west_level # Western Loop
+poplar_level #Poplar Hill Road
 
 ```
 
 
 
 ```{r, message= FALSE, warning=FALSE}
+# Filtering subset to use in creating difficulty grade function ----
 everything <- x %>%
   dplyr::select("name", "ELEV_M", "SHAPE_LEN") %>%
   st_set_geometry(NULL)
@@ -209,23 +205,48 @@ everything <- x %>%
 
 
 ```{r, message= FALSE, warning=FALSE}
+# Creating function to plot graphs for each trail ----
 difficulty_grade <- function(trail_name) {
   
   everything %>%
     filter(name == trail_name) %>%
     ggplot(aes(x = SHAPE_LEN, y = ELEV_M)) + 
-    geom_point()+
-    geom_line()+
-    expand_limits(x = c(0,100), y = c(220, 300)) +
-    labs(title = trail_name)
+ geom_smooth(method = 'loess') +
+  geom_point(size = 5) +
+  geom_smooth(color = "black") +
+    labs(title = trail_name)+
+    xlab("Distance of Trail (miles)") +
+  ylab("Change in elevation (ft)")
 }
 ```
 
 ```{r, message= FALSE, warning=FALSE}
+# Function execution ----
 difficulty_grade("Western Loop")
 difficulty_grade("Eastern Loop")
+difficulty_grade("Poplar Hill Road")
 ```
 
+*Graph Explanation*
+The elevation graph for each trails shows the total change in elevation in feet to the distance of the trail in miles for three hiking trails: Eastern Loop, Western Loop and Poplar Hill Road.
+
+To determine the difficulty level we used the following formula from [NPS Website](https://www.nps.gov/shen/planyourvisit/how-to-determine-hiking-difficulty.htm) :
+Square root of ( Elevation Gain(in feet) x 2 x distance (in miles))
+
+The elevation gain refers to the sum of every gain in elevation throughout an entire trip, so we added all the sections at each point of the trail. Then, by using the manual tool on the interactive map we calculated the length of the trail and multiplied the results accordingly to the formula. 
+
+After computing difficulty levels, we mapped each trail to the categories: Difficult, Moderate, Easy. East Loop being the most difficult, followed by West Loop and Poplar Road the Easiest. Altough intersection with trail roads and contours occurs more or on West Loop than East Loop, after the MacLeish trip, we decided that the Eastern Loop required much more effort to finish than the Western Loop.
 
 
+*Recommendations*
+To advertise the MacLeish station, we recommend opening the MacLeish Station for the public, not just the Smith students. The trails should be clearly labeled with the difficulty level and suggestions on what age range is appropriate for which trail. Good way to advertise Macleish Field is to record commercial that could encourage general public, prospective students as well as current students to take advantage of MacLeish Station. 
+
+*1.	What will it cost?*
+The commercial / teaser should be recorder by Smith students in order to save on costs of he production. If the project would be entirely curated by students, the costs of the production would be close to zero. 
+
+*2. How long will it take*
+
+*3. Are there any concerns about environmental impact?*
+
+*4. Do you see any major roadblocks?*
 
