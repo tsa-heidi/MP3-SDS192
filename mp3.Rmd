@@ -246,12 +246,12 @@ The trails should be clearly labeled with the difficulty level and suggestions o
 
 
 *1.	What will it cost?*
-The commercial / teaser should be recorded by Smith students in order to save on costs of the production. If the project would be entirely curated by students, the costs of the production would be close to zero in terms of equipment. 
 
 *2. How long will it take*
 Pre-production, such as writing a script, location scouting, getting permits, and scheduling shoots, can take up to 2-3 weeks. The shooting shouldn't take longer than 2-3 days. Post-production depends on how skilled the students are in montaging the ad (if needed, Smith's Media faculty should be involved in the process). We are estimating the entire production to be around 1 month.
 
 *3. Are there any concerns about environmental impact?*
+
 Opening to  the public can cause problems like littering. To solve this, Smith College should install more trash bins and implement fines if anyone would litter.
 
 *4. Do you see any major roadblocks?*
@@ -260,4 +260,3 @@ Opening to public may interfere with any on going research taking place at MacLe
 
 
 
-> Word count: `r wordcountaddin::word_count()`
