@@ -233,20 +233,25 @@ The elevation graph for each trails shows the total change in elevation in feet 
 To determine the difficulty level we used the following formula from [NPS Website](https://www.nps.gov/shen/planyourvisit/how-to-determine-hiking-difficulty.htm) :
 Square root of ( Elevation Gain(in feet) x 2 x distance (in miles))
 
-The elevation gain refers to the sum of every gain in elevation throughout an entire trip, so we added all the sections at each point of the trail. Then, by using the manual tool on the interactive map we calculated the length of the trail and multiplied the results accordingly to the formula. 
+The elevation gain refers to the sum of every gain in elevation throughout an entire trip, so we added all the sections at each point of the trail ( SHAPE_LEN) . Then, by using the manual tool on the interactive map we connected points to find the length of each trail and multiplied the results accordingly to the formula. 
 
 After computing difficulty levels, we mapped each trail to the categories: Difficult, Moderate, Easy. East Loop being the most difficult, followed by West Loop and Poplar Road the Easiest. Altough intersection with trail roads and contours occurs more or on West Loop than East Loop, after the MacLeish trip, we decided that the Eastern Loop required much more effort to finish than the Western Loop.
 
 
 *Recommendations*
-To advertise the MacLeish station, we recommend opening the MacLeish Station for the public, not just the Smith students. The trails should be clearly labeled with the difficulty level and suggestions on what age range is appropriate for which trail. Good way to advertise Macleish Field is to record commercial that could encourage general public, prospective students as well as current students to take advantage of MacLeish Station. 
+To advertise the MacLeish new trails, we recommend opening the MacLeish Station for the public, not just the Smith students. Allowing the public to access the Macleish will promote Smith's students work and potentially reach future sponsors (if needed, research grants or possible expansion of Bechtel Environmental Classroom ). 
+
+
+The trails should be clearly labeled with the difficulty level and suggestions on what age range is appropriate for which trail. Good way to advertise Macleish Field is to record commercial that could encourage general public, prospective students and current students to take advantage of MacLeish Station. Commercial should include what one can see while hiking.
 
 *1.	What will it cost?*
-The commercial / teaser should be recorder by Smith students in order to save on costs of the production. If the project would be entirely curated by students, the costs of the production would be close to zero. 
+The commercial / teaser should be recorded by Smith students in order to save on costs of the production. If the project would be entirely curated by students, the costs of the production would be close to zero in terms of equipment. 
 
 *2. How long will it take*
-This should take about a week depending on how many people are working on it.
+Pre-production, such as writing a script, location scouting, getting permits, and scheduling shoots, can take up to 2-3 weeks. The shooting shouldn't take longer than 2-3 days. Post-production depends on how skilled the students are in montaging the ad (if needed, Smith's Media faculty should be involved in the process). We are estimating the entire production to be around 1 month.
+
 *3. Are there any concerns about environmental impact?*
-Opening to  the public can cause problems like littering. 
+Opening to  the public can cause problems like littering. To solve this, Smith College should instal more trash bins.
+
 *4. Do you see any major roadblocks?*
-Opening to public may interfere with any on going research taking place at MacLeish because of traffic.
+Opening to public may interfere with any on going research taking place at MacLeish because of traffic. To solve this there should be indicated "Open to Public hours".
