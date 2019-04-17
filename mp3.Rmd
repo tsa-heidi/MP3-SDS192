@@ -235,7 +235,7 @@ Square root of ( Elevation Gain(in feet) x 2 x distance (in miles))
 
 The elevation gain refers to the sum of every gain in elevation throughout an entire trip, so we added all the sections at each point of the trail ( SHAPE_LEN) . Then, by using the manual tool on the interactive map we connected points to find the length of each trail and multiplied the results accordingly to the formula. 
 
-After computing difficulty levels, we mapped each trail to the categories: Difficult, Moderate, Easy. East Loop being the most difficult, followed by West Loop and Poplar Road the Easiest. Altough intersection with trail roads and contours occurs more or on West Loop than East Loop, after the MacLeish trip, we decided that the Eastern Loop required much more effort to finish than the Western Loop.
+After computing difficulty levels, we mapped each trail to the categories: Difficult, Moderate, Easy. East Loop being the most difficult, followed by West Loop and Poplar Road the Easiest. Altough intersection with trail roads and contours occurs more or on West Loop than East Loop, after the MacLeish trip, we decided that the Eastern Loop required much more effort to finish than the Western Loop..
 
 
 *Recommendations*
